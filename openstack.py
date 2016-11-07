@@ -41,7 +41,7 @@ if __name__ == '__main__':
     # reset index needed to align from 0, drop = True so that dataframe won't input row name from previous into new dataframe
     df_out=pd.concat([pd.Series(x_test).reset_index(drop=True),pd.Series(predicted).reset_index(drop=True)],axis=1)    
     df_out.rename(columns={0:'cpu'},inplace=True)
-    #df_out.to_csv('predict.csv', index=False)
+    df_out.to_csv('predict.csv', index=False)
 
     # Plot
     fig = plt.figure()
