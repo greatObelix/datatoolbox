@@ -2,7 +2,7 @@
 """
 Created on Mon Nov  7 16:31:53 2016
 
-@author: mh636c
+@author: mh
 """
 
 import pandas as pd
