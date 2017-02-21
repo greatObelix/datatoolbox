@@ -50,6 +50,12 @@ class minh_dataXplore:
     def boxplot(self, col, by=None):
         self.df.boxplot(column=col, by=by, return_type='axes')
         return
+
+    # scatter plot all columns against each other
+    def distroXplore(self, a=0.2, size=(20,20), diag='kde', col=[]):
+        from pandas.tools.plotting import scatter_matrix        
+        scatter_matrix(self.df[col], alpha =a, figsize=size, diagonal=diag)
+        return 
     
     # pivot table where index = column to be used as row in pivot table could be array
     # column = column to be used as column in pivot table, array accepted
