@@ -100,7 +100,15 @@ def scatter_timeseries():
     ax.yaxis.grid()
     ax.xaxis.set_major_locator(dates.MonthLocator())
     ax.xaxis.set_major_formatter(dates.DateFormatter('\n\n\n%b\n%Y'))
-    
+    """
+    # adjust graph x axis label for pretty day hour
+    ax.xaxis.set_major_locator(dates.DayLocator())
+    ax.xaxis.set_minor_formatter(dates.DateFormatter('%H'))
+    ax.xaxis.set_minor_locator(dates.HourLocator(np.arange(0, 25, 6)))
+    ax.xaxis.set_major_formatter(dates.DateFormatter('\n%a'))
+    fig.autofmt_xdate()
+    fig.set_size_inches(15,10)
+    """
     # create anomaly dataframe
     x = vr_df[['datetime']].reset_index(drop=True)
     y = vr_df[['active_flows_mean']].reset_index(drop=True)
