@@ -186,6 +186,45 @@ class timeseries():
         plt.plot(exog,'g')
         plt.plot(forecast,'r')
 
+    # create a differenced series
+    def difference(self, dataset, interval=1):
+        diff = list()
+        for i in range(interval, len(dataset)):
+            value = float(dataset[i] - dataset[i - interval])
+            diff.append(value)
+        return np.array(diff)
+    
+    # invert differenced value
+    def inverse_difference(self, history, yhat, interval=1):
+        return yhat + history[-interval]
+        
+    # forecast3, out of sample forecast, first diff to eliminate seasonality, then invert the diff
+    # by adding historical data by the ith datapoint define by cycle
+    def ARIMA_forcast3(self):
+        # load dataset
+        series = pd.Series(vr_df['ACTIVE_FLOWS'][0:7000])
+        # seasonal difference
+        X = series.values
+        cycle = 288 #2016
+        differenced = difference(X, cycle)
+        # fit model
+        model = ARIMA(differenced, order=(1,1,1))
+        model_fit = model.fit(disp=0)
+        # multi-step out-of-sample forecast
+        forecast = model_fit.forecast(steps=2016)[0]
+        # invert the differenced forecast to something usable
+        history = [x for x in X]
+        step = 1
+        forecast_values = []
+        for yhat in forecast:
+            inverted = inverse_difference(history, yhat, cycle)
+            #print('Day %d: %f' % (day, inverted))
+            forecast_values.append(inverted)
+            history.append(vr_df['ACTIVE_FLOWS'][7000+step-1])
+            step += 1
+
+
+     
 if __name__ == '__main__':
     
     rcParams['figure.figsize'] = 15, 6
