@@ -1,9 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Tue May 23 21:13:58 2017
-
-@author: mh636c
-"""
 
 from collections import defaultdict
 from copy import deepcopy
@@ -141,8 +136,8 @@ class calc_diff():
                     fout.write('\n')        
 
 if __name__ == '__main__':
-    fname_in = 'vertica/sqlout_CONTRAIL_vrouter_20170301_20170331.csv.gz'    
-    fname_out = 'vertica/sqlout_CONTRAIL_vrouter_20170301_20170331_diff.csv'
+    fname_in = ''  
+    fname_out = ''
     vr = calc_diff()
     vr.getraw(fname_in)
     vr.calc_delta2()
