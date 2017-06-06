@@ -223,7 +223,46 @@ class timeseries():
             history.append(vr_df['ACTIVE_FLOWS'][7000+step-1])
             step += 1
 
-
+    # similar to ARIMA_forecast3 except forecast num_forecast points at a time
+    # after each forecast refit the model with num_forecast points, repeat until end of actual data array use for test
+    def ARIMA_forecast4(self):
+        # parameters
+        num_train_init = 7318 
+        num_forecast = 12 #one day = 288 data points
+        cycle = 288 #for a total 288 samples per day
+        startdate = vr_df.index[num_train]
+        field = 'DELETED_FLOWS'
+        # array of predicted values
+        forecast_values = []
+        
+        for i in range(0,int(len(vr_df)/num_forecast)):
+            # check array for out of bound
+            num_train_current = i*num_forecast+num_train_init
+            if ((num_train_current) > len(vr_df)):
+                break
+            # load dataset
+            series = pd.Series(vr_df[field][0:num_train_current])
+            # Make data stationary: seasonal difference
+            X = series.values
+            differenced = difference(X, cycle)
+            # fit model
+            model = ARIMA(differenced, order=(1,1,1))
+            model_fit = model.fit(disp=0)
+            # multi-step out-of-sample forecast
+            forecast = model_fit.forecast(steps=num_forecast)[0]
+            # invert the differenced forecast to something usable
+            history = [x for x in X]
+            step = 1
+            for yhat in forecast:
+                inverted = inverse_difference(history, yhat, cycle)        
+                forecast_values.append(inverted)
+                #append actual data
+                try:
+                    history.append(vr_df[field][num_train_current+step-1])
+                except:
+                    # reached the end of actual data array, use forecasted values to estimate
+                    history.append(inverted)
+                step += 1
      
 if __name__ == '__main__':
     
