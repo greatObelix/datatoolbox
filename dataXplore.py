@@ -2,7 +2,7 @@
 """
 Created on Mon Nov  7 16:31:53 2016
 
-@author: mh
+@author: mh636c
 """
 
 import pandas as pd
@@ -50,13 +50,13 @@ class minh_dataXplore:
     def boxplot(self, col, by=None):
         self.df.boxplot(column=col, by=by, return_type='axes')
         return
-
+    
     # scatter plot all columns against each other
     def distroXplore(self, a=0.2, size=(20,20), diag='kde', col=[]):
         from pandas.tools.plotting import scatter_matrix        
         scatter_matrix(self.df[col], alpha =a, figsize=size, diagonal=diag)
-        return 
-    
+        return        
+        
     # pivot table where index = column to be used as row in pivot table could be array
     # column = column to be used as column in pivot table, array accepted
     # aggrfunc = function to aggregate
@@ -90,6 +90,28 @@ class minh_dataXplore:
         for i in col:
             self.df[i] = le.fit_transform(self.df[i])
         return 
+
+    # one hot encoding
+    def onehotencod(self, header):
+        self.df = pd.get_dummies(self.df)
+        
+#==============================================================================
+#   transform data, log and scale
+#==============================================================================        
+    #apply a logarithmic transformation on the data so that the very large and
+    #very small values do not negatively affect the performance of a learning algorithm
+    # log of 0 is undefined, so need to map to +1, work for positive values
+    def takelog(self,header):
+        self.df[header] = self.df[header].apply(lambda x: np.log(x+1))
+
+    # Applying a scaling to the data does not change the shape of each feature's distribution
+    # normalization ensures that each feature is treated equally when applying supervised learners        
+    def scale(self, numerical_header):
+        from sklearn.preprocessing import MinMaxScaler
+
+        # Initialize a scaler, then apply it to the features
+        scaler = MinMaxScaler() # default=(0, 1)
+        self.df[numerical_header] = scaler.fit_transform(self.df[numerical_header])
         
         
 if __name__ == '__main__':
@@ -99,6 +121,7 @@ if __name__ == '__main__':
     test.missing_summary(axis=0)
     #test.histogram(col='Item_Outlet_Sales')
     #test.boxplot('Item_Outlet_Sales',by='Outlet_Location_Type')
+    test.distroXplore(col=['Item_Weight','Item_Visibility','Item_Outlet_Sales']);
     test.pivotTable(val='Item_Outlet_Sales',col='Outlet_Type',ind='Outlet_Identifier')
     test.encoding(col='Item_Fat_Content',dictcode={'LF':'Low Fat','low fat':'Low Fat','Regular':'reg'})
     test.uniqvalue('Item_Fat_Content')
