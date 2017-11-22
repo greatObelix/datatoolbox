@@ -137,7 +137,7 @@ def AdaptiveBoosting():
     from sklearn.ensemble import AdaBoostClassifier # or regression use AdaBoostRegressor
     #Assumed you have, X (predictor) and Y (target) for training data set and x_test(predictor) of test_dataset
     # Create Gradient Boosting Classifier object
-    clf= AdaBoostClassifier(random_state=0)
+    clf= AdaBoostClassifier(base_estimator = DecisionTreeClassifier(max_depth=12), n_estimator = 100, random_state=0)
     # Train the model using the training sets and check score
     clf.fit(X, y)
     # R^2 score
@@ -197,8 +197,36 @@ for train_index, test_index in cv_sets.split(X):
 from sklearn.metrics import fbeta_score
 from sklearn.metrics import accuracy_score
 
-# pipeline prediction
-def pipeline_train_predict(learner, sample_size, X_train, y_train, X_test, y_test): 
+# pipelining
+#Sequentially apply a list of transforms and a final estimator. Intermediate steps 
+#of the pipeline must be ‘transforms’, that is, they must implement fit and 
+#transform methods. The final estimator only needs to implement fit.
+#The purpose of the pipeline is to assemble several steps that can be 
+#cross-validated together while setting different parameters.
+from sklearn import svm
+from sklearn.datasets import samples_generator
+from sklearn.feature_selection import SelectKBest
+from sklearn.feature_selection import f_regression
+from sklearn.pipeline import Pipeline
+# generate some data to play with
+X, y = samples_generator.make_classification(n_informative=5, n_redundant=0, random_state=42)
+# ANOVA SVM-C
+anova_filter = SelectKBest(f_regression, k=5)
+clf = svm.SVC(kernel='linear')
+pipe = Pipeline([('anova', anova_filter), ('svc', clf)])
+# You can set the parameters using the names issued
+# For instance, fit using a k of 10 in the SelectKBest
+# and a parameter 'C' of the svm
+pipe.set_params(anova__k=10, svc__C=.1).fit(X, y)
+prediction = pipe.predict(X)
+pipe.score(X, y) 
+# can combine with gridsearch
+grid = GridSearchCV(pipe, param_dict = dict(anova__k=10, svc__C=.1))
+grid.fit(X,y)
+
+
+# automate a generic train/predict function, with time
+def automate_train_predict(learner, sample_size, X_train, y_train, X_test, y_test): 
     '''
     inputs:
        - learner: the learning algorithm to be trained and predicted on
