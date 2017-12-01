@@ -293,4 +293,19 @@ for clf in [clf_A, clf_B, clf_C]:
         results[clf_name][i] = \
         pipeline_train_predict(clf, samples, X_train, y_train, X_test, y_test)
 
-    
+
+# confusion matrix
+from sklearn.metrics import confusion_matrix
+import seaborn as sns
+import matplotlib.pyplot as plt
+%matplotlib inline
+
+# Compute confusion matrix for a model
+model = clf_C
+cm = confusion_matrix(y_test.values, model.predict(X_test))
+
+# view with a heatmap
+sns.heatmap(cm, annot=True, cmap='Blues', xticklabels=['no', 'yes'], yticklabels=['no', 'yes'])
+plt.ylabel('True label')
+plt.xlabel('Predicted label')
+plt.title('Confusion matrix for:\n{}'.format(model.__class__.__name__));
