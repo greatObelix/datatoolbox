@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Created on Wed Oct 26 17:38:48 2016
 
-@author: mh636c
 """
 
 def linear_regr():
