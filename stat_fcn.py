@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 """
 Created on Fri Nov 10 14:02:40 2017
-
-@author: mh636c
 """
 
 # Z-score table lookup
