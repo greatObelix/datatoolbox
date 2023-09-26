@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 """
 Created on Thu Aug 11 17:05:44 2016
-
-@author: mh636c
 """
 
 from nltk.corpus import stopwords
